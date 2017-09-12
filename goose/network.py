@@ -20,8 +20,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import urllib2
-import cookielib
+import urllib.request, urllib.error, urllib.parse
+import http.cookiejar
 
 class HtmlFetcher(object):
 
@@ -35,18 +35,18 @@ class HtmlFetcher(object):
         """\
 
         """
-        if isinstance(url, unicode):
-            url = url.encode('utf-8')
+        #if isinstance(url, str):
+        #    url = url.encode('utf-8')
         
-        cookiejar = cookielib.LWPCookieJar()
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookiejar))
-        urllib2.install_opener(opener)
+        cookiejar = http.cookiejar.LWPCookieJar()
+        opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookiejar))
+        urllib.request.install_opener(opener)
 
         headers = {'User-agent': config.browser_user_agent}
-        request = urllib2.Request(url, headers=headers)
+        request = urllib.request.Request(url, headers=headers)
 
         try:
-            result = urllib2.urlopen(request).read()
+            result = urllib.request.urlopen(request).read()
         except:
             return None
 

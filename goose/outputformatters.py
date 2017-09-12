@@ -20,8 +20,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 from goose.text import innerTrim
+import html
 
 
 class OutputFormatter(object):
@@ -62,7 +63,7 @@ class OutputFormatter(object):
         for node in list(self.get_top_node()):
             txt = self.parser.getText(node)
             if txt:
-                txt = HTMLParser().unescape(txt)
+                txt = html.unescape(txt)
                 txt_lis = innerTrim(txt).split(r'\n')
                 txts.extend(txt_lis)
         return '\n\n'.join(txts)

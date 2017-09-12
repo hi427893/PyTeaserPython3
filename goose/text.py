@@ -33,7 +33,7 @@ from goose.utils.encoding import DjangoUnicodeDecodeError
 TABSSPACE = re.compile(r'[\s\t]+')
 
 def innerTrim(value):
-    if isinstance(value, (unicode, str)):
+    if isinstance(value, str):
         # remove tab and white space
         value = re.sub(TABSSPACE, ' ', value)
         value = ''.join(value.splitlines())
@@ -87,8 +87,8 @@ class WordStats(object):
 
 class StopWords(object):
 
-    PUNCTUATION = re.compile("[^\\p{Ll}\\p{Lu}\\p{Lt}\\p{Lo}\\p{Nd}\\p{Pc}\\s]")
-    TRANS_TABLE = string.maketrans('', '')
+    #PUNCTUATION = re.compile("[^\\p{Ll}\\p{Lu}\\p{Lt}\\p{Lo}\\p{Nd}\\p{Pc}\\s]")
+    #TRANS_TABLE = string.maketrans('', '')
     _cached_stop_words = {}
 
     def __init__(self, language='en'):
@@ -101,10 +101,9 @@ class StopWords(object):
 
     def remove_punctuation(self, content):
         # code taken form
-        # http://stackoverflow.com/questions/265960/best-way-to-strip-punctuation-from-a-string-in-python
-        if isinstance(content, unicode):
-            content = content.encode('utf-8')
-        return content.translate(self.TRANS_TABLE, string.punctuation).decode('utf-8')
+        # https://stackoverflow.com/questions/34293875/how-to-remove-punctuation-marks-from-a-string-in-python-3-x-using-translate
+        translator = str.maketrans('','',string.punctuation)
+        return content.translate(translator)
 
     def candiate_words(self, stripped_input):
         return stripped_input.split(' ')

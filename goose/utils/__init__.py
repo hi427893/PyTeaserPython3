@@ -26,7 +26,8 @@ import re
 import os
 import goose
 import codecs
-import urlparse
+import urllib.parse
+import six
 
 
 class BuildURL(object):
@@ -89,7 +90,7 @@ class ParsingCandidate(object):
 class RawHelper(object):
     @classmethod
     def get_parsing_candidate(self, url, raw_html):
-        if isinstance(raw_html, unicode):
+        if isinstance(raw_html, str):
             raw_html = raw_html.encode('utf-8')
         link_hash = '%s.%s' % (hashlib.md5(raw_html).hexdigest(), time.time())
         return ParsingCandidate(url, link_hash)
@@ -101,7 +102,8 @@ class URLHelper(object):
         # replace shebang is urls
         final_url = url_to_crawl.replace('#!', '?_escaped_fragment_=') \
                     if '#!' in url_to_crawl else url_to_crawl
-        link_hash = '%s.%s' % (hashlib.md5(final_url).hexdigest(), time.time())
+        url = final_url.encode("utf-8") if isinstance(final_url, six.text_type) else final_url
+        link_hash = '%s.%s' % (hashlib.md5(url).hexdigest(), time.time())
         return ParsingCandidate(final_url, link_hash)
 
 
@@ -126,7 +128,7 @@ class StringReplacement(object):
 
     def replaceAll(self, string):
         if not string:
-            return u''
+            return ''
         return string.replace(self.pattern, self.replaceWith)
 
 
@@ -137,7 +139,7 @@ class ReplaceSequence(object):
 
     #@classmethod
     def create(self, firstPattern, replaceWith=None):
-        result = StringReplacement(firstPattern, replaceWith or u'')
+        result = StringReplacement(firstPattern, replaceWith or '')
         self.replacements.append(result)
         return self
 
@@ -146,7 +148,7 @@ class ReplaceSequence(object):
 
     def replaceAll(self, string):
         if not string:
-            return u''
+            return ''
 
         mutatedString = string
 
